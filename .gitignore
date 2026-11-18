@@ -1,0 +1,76 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Data: BioASQ is never committed (see data/README.md)
+data/*
+!data/README.md
+
+# Generated artifacts and results: never committed
+indexes/
+outputs/
+tests/golden/
+
+# The same kinds of files anywhere else in the tree (a run or script writing outside outputs/)
+# Dataset copies
+*bioasq*
+# Run logs, caches and result tables (test fixtures in tests/assets/ are the only exception)
+*.jsonl
+!tests/assets/*.jsonl
+*.csv
+*.tsv
+*.log
+runs/
+logs/
+results/
+reports/
+cache/
+.cache/
+# Embeddings, vector stores and model weights
+chroma/
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.parquet
+*.sqlite3
+*.db
+*.bin
+*.safetensors
+*.pt
+*.ckpt
+*.onnx
+
+# Keys and credentials
+*.pem
+*.key
+credentials*.json
+service-account*.json
+
+# Local-only documents containing results or third-party content (not tracked, even locally)
+docs/thesis/
+docs/notes/
+
+# Local-only documents and tooling: never committed in this repository
+docs/
+CLAUDE.md
+.claude/

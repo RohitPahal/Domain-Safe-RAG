@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-thesis"
+version = "0.2.0"
+description = "Domain-safe query rewriting for biomedical retrieval-augmented question answering"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+# Direct dependencies only: everything the code imports. Exact versions of the
+# environment that produced the results are pinned in requirements.txt.
+dependencies = [
+    "pydantic>=2.8,<3",
+    "typer>=0.12,<1",
+    "pyyaml>=6,<7",
+    "numpy>=1.26,<3",
+    "orjson>=3.10,<4",
+    "rank-bm25>=0.2.2,<0.3",
+    "sentence-transformers>=3,<6",
+    "transformers>=4.40,<6",
+    "torch>=2.4,<3",
+    "chromadb>=1.5,<2",         # dense vector store (local, embedded)
+    "langgraph>=1.0,<2",
+]
+
+[project.optional-dependencies]
+gemini = ["google-genai>=1.73,<2"]
+openai = ["openai>=1.40,<3"]      # also Groq / Ollama / vLLM (OpenAI-compatible)
+anthropic = ["anthropic>=0.40,<2"]
+dev = ["pytest>=8.2,<10", "ruff>=0.17,<1"]
+
+[project.scripts]
+rag-thesis = "rag_thesis.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]                # lets tests import the debug scripts in tools/
+markers = [
+    # Tests that import the real ML stack (torch / sentence-transformers) and load the real
+    # indexes: ~20 s with a warm disk cache, much longer on a cold start. Deselect for a
+    # quick loop with:  pytest -m "not slow"
+    "slow: loads the real embedding model and indexes",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["src", "tests", "tools"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.flake8-bugbear]
+# Typer declares CLI options as default values; that is its intended usage, not a bug (B008).
+extend-immutable-calls = ["typer.Option", "typer.Argument"]

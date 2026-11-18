@@ -1,0 +1,74 @@
+# Default configuration = the setup that produced the official thesis benchmark
+# (outputs/final_benchmark/subset120_caseB_gem25flash_gem25flash_gem25pro_20260416/config_snapshot.yaml).
+# tests/unit/test_default_config.py checks that every setting below matches that snapshot,
+# except the documented differences marked "differs on purpose". The LLM settings use the
+# per-role `llm:` block; the snapshot's flat llm_* keys resolve to exactly the same roles
+# (rag_thesis.llm.settings), which the test checks too.
+
+# --- Data -------------------------------------------------------------------------------
+dataset_path: data/raw/bioasq.json
+subset_path: data/raw/bioasq_subset.json
+subset_n_qas: 120            # frozen evaluation set: 120 questions,
+subset_mode: stratified      # stratified by question type,
+subset_seed: 42              # fixed seed (re-creates the subset byte-for-byte)
+
+# --- Chunking (MiniLM wordpiece tokens) ---------------------------------------------------
+chunk_tokens: 180
+chunk_overlap: 40
+
+# --- Retrieval ----------------------------------------------------------------------------
+retrieve_k: 10               # chunks retrieved per query by the pipeline
+eval_k_list: [5, 10, 20]     # Recall@k cut-offs in retrieval evaluation
+rrf_k: 60                    # Reciprocal Rank Fusion constant (hybrid and multi-query fusion)
+
+# --- Dense embeddings ---------------------------------------------------------------------
+embed_model: sentence-transformers/all-MiniLM-L6-v2
+embed_device: auto           # differs on purpose (official: cuda). auto picks the GPU when present, as
+                             # in the official run, and still works on CPU-only machines.
+embed_batch_size: 32
+embed_max_seq_length: 256
+query_embedding_cache_dir: outputs/cache/query_embeddings
+                             # differs on purpose (the thesis runs had no such cache): every query vector
+                             # is stored exactly as encoded, so replays never re-encode or load the model.
+
+# --- Answer generation ----------------------------------------------------------------------
+answer_prompt_version: answer_v2
+                             # differs on purpose (the thesis runs used answer_v1, which a config without
+                             # this key still gets): the hardened prompt fences the question and passages
+                             # as untrusted data, covers the edge cases and can refuse (REFUSED).
+
+guardrails: true             # differs on purpose (the thesis runs had none): unsafe or injected questions
+                             # are refused before any call, and an answer must be a plain span of its passages.
+
+# --- Query rewriting ----------------------------------------------------------------------
+multi_rewrites: 4
+rewrite_cache_path: outputs/cache/rewrites.jsonl
+                             # differs on purpose. The official snapshot points inside the protected
+                             # outputs/final_benchmark/ folder; a cache miss appends to this file, so
+                             # the default must never point there.
+
+# --- LLM (only used by rewrite / repair / answer / judge; never called without permission) --
+# Real calls need an explicit flag (--generate for run/run-batch, --allow-llm-calls for judge).
+# Switching provider or model is a change here only: point a role at another provider.
+llm:
+  defaults:
+    temperature: 0             # deterministic
+    max_output_tokens: null    # provider default, as in the thesis runs
+    timeout_s: null
+    seed: null
+    max_retries: 3             # the one retry policy: 5 s / 10 s / 20 s backoff + jitter
+  cache_path: outputs/cache/llm_responses.jsonl
+                               # differs on purpose (the thesis runs had no request cache): every
+                               # successful LLM response is cached here, so repeats replay offline.
+  providers:
+    gemini: {type: gemini, api_key_env: GEMINI_API_KEY}   # the variable's name, never the key
+    # Other providers, ready to use by pointing a role at them:
+    # openai:    {type: openai_compatible, api_key_env: OPENAI_API_KEY}
+    # groq:      {type: openai_compatible, api_key_env: GROQ_API_KEY, base_url: https://api.groq.com/openai/v1}
+    # ollama:    {type: openai_compatible, api_key_env: null, base_url: http://localhost:11434/v1}
+    # anthropic: {type: anthropic, api_key_env: ANTHROPIC_API_KEY}
+  roles:
+    rewrite: {provider: gemini, model: gemini-2.5-flash}
+    repair:  {provider: gemini, model: gemini-2.5-flash}   # the thesis repaired with the rewrite model
+    answer:  {provider: gemini, model: gemini-2.5-flash}
+    judge:   {provider: gemini, model: gemini-2.5-pro}

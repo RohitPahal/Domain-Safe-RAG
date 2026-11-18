@@ -1,0 +1,2324 @@
+{
+  "bench-retrieval": {
+    "help": "Measure retrieval latency per retriever (index load and per query).",
+    "params": [
+      {
+        "count": false,
+        "default": "all",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "retriever",
+        "nargs": 1,
+        "opts": [
+          "--retriever"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": "Results per query (default: the largest eval_k_list value).",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "k",
+        "nargs": 1,
+        "opts": [
+          "--k"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "max_qids",
+        "nargs": 1,
+        "opts": [
+          "--max-qids"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval/questions.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "questions_path",
+        "nargs": 1,
+        "opts": [
+          "--questions-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/configs/default.yaml",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "config_path",
+        "nargs": 1,
+        "opts": [
+          "--config-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/indexes/bm25",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "bm25_dir",
+        "nargs": 1,
+        "opts": [
+          "--bm25-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/indexes/chroma",
+        "envvar": null,
+        "flag_value": null,
+        "help": "Dense (ChromaDB) index directory.",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "vector_dir",
+        "nargs": 1,
+        "opts": [
+          "--vector-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/outputs/reports",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "output_dir",
+        "nargs": 1,
+        "opts": [
+          "--output-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  },
+  "build-corpus": {
+    "help": "Build processed corpus artifacts from a SQuAD-style subset dataset.",
+    "params": [
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "input_path",
+        "nargs": 1,
+        "opts": [
+          "--in"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/configs/default.yaml",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "config_path",
+        "nargs": 1,
+        "opts": [
+          "--config"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/processed",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "processed_dir",
+        "nargs": 1,
+        "opts": [
+          "--processed-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "eval_dir",
+        "nargs": 1,
+        "opts": [
+          "--eval-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/outputs/reports",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "report_dir",
+        "nargs": 1,
+        "opts": [
+          "--report-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  },
+  "build-index": {
+    "help": "Build retrieval indexes (BM25 and/or dense ChromaDB) from chunks.jsonl.",
+    "params": [
+      {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Build the BM25 chunk index.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "bm25",
+        "nargs": 1,
+        "opts": [
+          "--bm25"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "boolean",
+          "param_type": "Bool"
+        }
+      },
+      {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Build the dense ChromaDB chunk index.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "dense",
+        "nargs": 1,
+        "opts": [
+          "--dense"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "boolean",
+          "param_type": "Bool"
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/processed/chunks.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "chunks_path",
+        "nargs": 1,
+        "opts": [
+          "--chunks-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "index_dir",
+        "nargs": 1,
+        "opts": [
+          "--index-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/configs/default.yaml",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "config_path",
+        "nargs": 1,
+        "opts": [
+          "--config-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  },
+  "eval-answers": {
+    "help": "Evaluate generated answers against gold answers for an existing RAG run log.",
+    "params": [
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "run_log_path",
+        "nargs": 1,
+        "opts": [
+          "--run-log-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval/questions.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "questions_path",
+        "nargs": 1,
+        "opts": [
+          "--questions-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval/gold_evidence.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "gold_evidence_path",
+        "nargs": 1,
+        "opts": [
+          "--gold-evidence-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/outputs/reports",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "reports_dir",
+        "nargs": 1,
+        "opts": [
+          "--reports-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  },
+  "eval-retrieval": {
+    "help": "Run deterministic retrieval-only evaluation on all questions.",
+    "params": [
+      {
+        "count": false,
+        "default": "all",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "retriever",
+        "nargs": 1,
+        "opts": [
+          "--retriever"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "max_qids",
+        "nargs": 1,
+        "opts": [
+          "--max_qids",
+          "--max-qids"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval/questions.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "questions_path",
+        "nargs": 1,
+        "opts": [
+          "--questions-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval/gold_evidence.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "gold_path",
+        "nargs": 1,
+        "opts": [
+          "--gold-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/configs/default.yaml",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "config_path",
+        "nargs": 1,
+        "opts": [
+          "--config-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/indexes/bm25",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "bm25_dir",
+        "nargs": 1,
+        "opts": [
+          "--bm25-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/indexes/chroma",
+        "envvar": null,
+        "flag_value": null,
+        "help": "Dense (ChromaDB) index directory.",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "vector_dir",
+        "nargs": 1,
+        "opts": [
+          "--vector-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/outputs/reports",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "output_dir",
+        "nargs": 1,
+        "opts": [
+          "--output-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": "Replay the queries of this run log (each question's logged rewrites, fused with RRF) instead of the raw questions.",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "queries_from_log",
+        "nargs": 1,
+        "opts": [
+          "--queries-from-log"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  },
+  "judge": {
+    "help": "Evaluate saved RAG run logs with a strict reference-guided LLM judge.",
+    "params": [
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "run_log_path",
+        "nargs": 1,
+        "opts": [
+          "--run-log-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval/questions.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "questions_path",
+        "nargs": 1,
+        "opts": [
+          "--questions-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/processed/chunks.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "chunks_path",
+        "nargs": 1,
+        "opts": [
+          "--chunks-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/configs/default.yaml",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "config_path",
+        "nargs": 1,
+        "opts": [
+          "--config-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/outputs/reports",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "reports_dir",
+        "nargs": 1,
+        "opts": [
+          "--reports-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "judge_model",
+        "nargs": 1,
+        "opts": [
+          "--judge-model"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "first_n",
+        "nargs": 1,
+        "opts": [
+          "--first-n"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "output_stem",
+        "nargs": 1,
+        "opts": [
+          "--output-stem"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Explicitly allow real LLM calls to the judge model (costs API usage).",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "allow_llm_calls",
+        "nargs": 1,
+        "opts": [
+          "--allow-llm-calls"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "boolean",
+          "param_type": "Bool"
+        }
+      }
+    ]
+  },
+  "make-subset": {
+    "help": "Create a deterministic QA subset from a SQuAD-style dataset.",
+    "params": [
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "input_path",
+        "nargs": 1,
+        "opts": [
+          "--in"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "output_path",
+        "nargs": 1,
+        "opts": [
+          "--out"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": false,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "n_qas",
+        "nargs": 1,
+        "opts": [
+          "--n_qas"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "mode",
+        "nargs": 1,
+        "opts": [
+          "--mode"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "seed",
+        "nargs": 1,
+        "opts": [
+          "--seed"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "name": "integer",
+          "param_type": "Int"
+        }
+      }
+    ]
+  },
+  "report": {
+    "help": "Generate deterministic thesis-final QA, latency, and cost reports from run logs.",
+    "params": [
+      {
+        "count": false,
+        "default": "<root>/outputs/runs",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "runs_dir",
+        "nargs": 1,
+        "opts": [
+          "--runs-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": true,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/outputs/reports",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "reports_dir",
+        "nargs": 1,
+        "opts": [
+          "--reports-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": true,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": 0.0,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "prompt_price_per_1k_usd",
+        "nargs": 1,
+        "opts": [
+          "--prompt-price-per-1k-usd"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "float",
+          "param_type": "Float"
+        }
+      },
+      {
+        "count": false,
+        "default": 0.0,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "completion_price_per_1k_usd",
+        "nargs": 1,
+        "opts": [
+          "--completion-price-per-1k-usd"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "float",
+          "param_type": "Float"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": "Questions with gold answers, to count rewrites that leak an answer (default: data/eval/questions.jsonl if it exists).",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "questions_path",
+        "nargs": 1,
+        "opts": [
+          "--questions-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  },
+  "rewrite-batch": {
+    "help": "Rewrite a question set into the rewrite cache (e.g. a dev split).",
+    "params": [
+      {
+        "count": false,
+        "default": "<root>/data/dev/questions.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "questions_path",
+        "nargs": 1,
+        "opts": [
+          "--questions-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "multi",
+        "envvar": null,
+        "flag_value": null,
+        "help": "single, multi, structured (R6) or hyde (R8)",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "mode",
+        "nargs": 1,
+        "opts": [
+          "--mode"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "max_qids",
+        "nargs": 1,
+        "opts": [
+          "--max-qids"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/configs/default.yaml",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "config_path",
+        "nargs": 1,
+        "opts": [
+          "--config-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Call the rewrite model for questions not in the cache (needs its API key).",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "allow_llm_calls",
+        "nargs": 1,
+        "opts": [
+          "--allow-llm-calls"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "boolean",
+          "param_type": "Bool"
+        }
+      }
+    ]
+  },
+  "run": {
+    "help": "Run the deterministic LangGraph RAG workflow for one question.",
+    "params": [
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "qid",
+        "nargs": 1,
+        "opts": [
+          "--qid"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": true,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": "hybrid",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "retriever",
+        "nargs": 1,
+        "opts": [
+          "--retriever"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": "none",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "rewrite",
+        "nargs": 1,
+        "opts": [
+          "--rewrite"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": "on",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "guard",
+        "nargs": 1,
+        "opts": [
+          "--guard"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": 10,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "k",
+        "nargs": 1,
+        "opts": [
+          "--k"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Explicitly enable live LLM-backed rewriting, guard repair, and answer generation.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "generate",
+        "nargs": 1,
+        "opts": [
+          "--generate"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "boolean",
+          "param_type": "Bool"
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval/questions.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "questions_path",
+        "nargs": 1,
+        "opts": [
+          "--questions-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/processed/chunks.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "chunks_path",
+        "nargs": 1,
+        "opts": [
+          "--chunks-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/indexes/bm25",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "bm25_dir",
+        "nargs": 1,
+        "opts": [
+          "--bm25-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/indexes/chroma",
+        "envvar": null,
+        "flag_value": null,
+        "help": "Dense (ChromaDB) index directory.",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "vector_dir",
+        "nargs": 1,
+        "opts": [
+          "--vector-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/configs/default.yaml",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "config_path",
+        "nargs": 1,
+        "opts": [
+          "--config-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "log_path",
+        "nargs": 1,
+        "opts": [
+          "--log-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": false,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  },
+  "run-batch": {
+    "help": "Run the deterministic RAG workflow over multiple qids using one explicit preloaded context.",
+    "params": [
+      {
+        "count": false,
+        "default": "hybrid",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "retriever",
+        "nargs": 1,
+        "opts": [
+          "--retriever"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": "none",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "rewrite",
+        "nargs": 1,
+        "opts": [
+          "--rewrite"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": "off",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "guard",
+        "nargs": 1,
+        "opts": [
+          "--guard"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "text",
+          "param_type": "String"
+        }
+      },
+      {
+        "count": false,
+        "default": 10,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "k",
+        "nargs": 1,
+        "opts": [
+          "--k"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "first_n",
+        "nargs": 1,
+        "opts": [
+          "--first-n",
+          "--first_n"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": null,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "random_n",
+        "nargs": 1,
+        "opts": [
+          "--random-n",
+          "--random_n"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "clamp": false,
+          "max": null,
+          "max_open": false,
+          "min": 1,
+          "min_open": false,
+          "name": "integer range",
+          "param_type": "IntRange"
+        }
+      },
+      {
+        "count": false,
+        "default": 42,
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "seed",
+        "nargs": 1,
+        "opts": [
+          "--seed"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "integer",
+          "param_type": "Int"
+        }
+      },
+      {
+        "count": false,
+        "default": false,
+        "envvar": null,
+        "flag_value": true,
+        "help": "Explicitly enable live LLM-backed rewriting, guard repair, and answer generation.",
+        "hidden": false,
+        "is_flag": true,
+        "multiple": false,
+        "name": "generate",
+        "nargs": 1,
+        "opts": [
+          "--generate"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "name": "boolean",
+          "param_type": "Bool"
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval/questions.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "questions_path",
+        "nargs": 1,
+        "opts": [
+          "--questions-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/processed/chunks.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "chunks_path",
+        "nargs": 1,
+        "opts": [
+          "--chunks-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/indexes/bm25",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "bm25_dir",
+        "nargs": 1,
+        "opts": [
+          "--bm25-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/indexes/chroma",
+        "envvar": null,
+        "flag_value": null,
+        "help": "Dense (ChromaDB) index directory.",
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "vector_dir",
+        "nargs": 1,
+        "opts": [
+          "--vector-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": false,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/configs/default.yaml",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "config_path",
+        "nargs": 1,
+        "opts": [
+          "--config-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": true,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/outputs/runs/run_log_batch.jsonl",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "log_path",
+        "nargs": 1,
+        "opts": [
+          "--log-path"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": false,
+          "exists": false,
+          "file_okay": true,
+          "name": "file",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  },
+  "validate": {
+    "help": "Validate processed and evaluation JSONL artifacts.",
+    "params": [
+      {
+        "count": false,
+        "default": "<root>/data/processed",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "processed_dir",
+        "nargs": 1,
+        "opts": [
+          "--processed-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": true,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      },
+      {
+        "count": false,
+        "default": "<root>/data/eval",
+        "envvar": null,
+        "flag_value": null,
+        "help": null,
+        "hidden": false,
+        "is_flag": false,
+        "multiple": false,
+        "name": "eval_dir",
+        "nargs": 1,
+        "opts": [
+          "--eval-dir"
+        ],
+        "param_type_name": "option",
+        "prompt": null,
+        "required": false,
+        "secondary_opts": [],
+        "type": {
+          "allow_dash": false,
+          "dir_okay": true,
+          "exists": true,
+          "file_okay": false,
+          "name": "directory",
+          "param_type": "TyperPath",
+          "readable": true,
+          "writable": false
+        }
+      }
+    ]
+  }
+}

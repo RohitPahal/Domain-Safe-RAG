@@ -1,0 +1,30 @@
+# Exact versions of the direct dependencies in the environment that reproduces the
+# official retrieval results offline.
+# Ranges for library use are in pyproject.toml.
+#
+#   pip install -r requirements.txt
+#   pip install -e . --no-deps
+#
+# torch: the reference environment used the CUDA 12.1 build (2.5.1+cu121). For GPU use
+#   pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cu121
+# CPU-only works as well.
+
+pydantic==2.12.5
+typer==0.24.1
+PyYAML==6.0.3
+numpy==2.4.3
+orjson==3.11.7
+rank-bm25==0.2.2        # optional Okapi variant; the default BM25 is the built-in Lucene-IDF variant the official results used
+sentence-transformers==5.2.3
+transformers==5.3.0
+torch==2.5.1
+chromadb==1.5.9
+langgraph==1.1.0
+
+# LLM providers (only needed for rewrite / answer / judge runs)
+google-genai==1.73.1
+openai==2.26.0
+
+# Development
+pytest==9.0.2
+ruff==0.17.3

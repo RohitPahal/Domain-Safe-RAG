@@ -1,0 +1,48 @@
+# Continuous integration: lint, format check and the offline test suite on every push and PR.
+# Needs no secrets, no API keys and no dataset: tests that depend on local data or indexes
+# skip themselves, and LLM clients are always faked in tests.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # CPU-only PyTorch (same pinned version): the default Linux wheel bundles ~2 GB of CUDA
+          # libraries that CI never uses.
+          pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+          pip install -e . --no-deps
+
+      - name: Lint
+        run: ruff check src tests tools
+
+      - name: Format check
+        run: ruff format --check src tests tools
+
+      - name: Tests (offline)
+        env:
+          HF_HUB_OFFLINE: "1"
+          TRANSFORMERS_OFFLINE: "1"
+        run: python -m pytest -q
