@@ -14,6 +14,8 @@ Tests that need their own guard (tests/unit/test_protection.py) still override i
 
 from __future__ import annotations
 
+import os
+
 import pytest
 
 import rag_thesis.rewrite.rewriter as rewriter
@@ -22,6 +24,12 @@ from rag_thesis.paths import PROJECT_ROOT
 from rag_thesis.protection import WriteGuard
 
 REAL_DATA_DIRS = ("outputs", "data", "indexes")
+
+# Typer forces coloured Rich output when GITHUB_ACTIONS (or FORCE_COLOR / PY_COLORS) is set: option
+# names such as "--in" are then split by ANSI codes and tests that read help or error text fail in
+# CI only. Typer's own switch turns that off; it is read when typer.rich_utils is first imported,
+# which Typer does lazily, so setting it here (before any test runs) is early enough.
+os.environ["_TYPER_FORCE_DISABLE_TERMINAL"] = "1"
 
 
 @pytest.fixture(autouse=True)
