@@ -50,7 +50,7 @@ This project studies **when rewriting helps retrieval** and adds a **domain-safe
 | 🛡️ | **Domain-safe guard** | Detects missing or added critical tokens and added negations, then repairs or falls back to the original query. Guard v2 (not yet default) also catches removed negations, mutation codes and answer-type drift |
 | 🔀 | **LangGraph workflow** | rewrite → guard → retrieve → generate → log. Branches (skip or fall back from a rewrite, guard on/off, top-3 retry after no answer) are real graph edges |
 | 🔐 | **Answer safety** | Hardened prompt treats the question and passages as untrusted data. Guardrails in code refuse unsafe or injected questions before any model call, and an answer must be a plain span of its passages |
-| 📊 | **Evaluation** | Recall@k, Hit@k, MRR, nDCG with bootstrap CIs and paired tests; EM / token F1; LLM judge; guard and answer-leak metrics; red-team set, all computed from saved run logs |
+| 📊 | **Evaluation** | **Retrieval** (local): Recall@k, Hit@k, MRR, nDCG@10 with bootstrap CIs and paired tests. **Answers**: exact match and token F1 (local), plus an **LLM judge** (API key) that rates each answer correct / partially correct / incorrect / unsupported and scores faithfulness and relevance; judge verdicts are cached, so reports replay without new calls. **Reports**: latency, token usage, guard actions, answer leaks. **Guardrails**: a red-team set checked locally; the attack run against the answer model needs an API key |
 | 📴 | **Offline-first** | Tests, data prep, indexing and retrieval evaluation need no API key and no network |
 | 🎯 | **Deterministic** | Content-hash IDs, fixed seeds, `temperature=0`, stable tie-breaking |
 
